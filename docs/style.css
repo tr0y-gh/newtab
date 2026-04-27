@@ -8,7 +8,8 @@
   --pad-md: .5rem;
   --bg-light: #222;
   --bg-normal: #000;
-  --fg-normal: #fff;
+  --fg-normal: #bbb;
+  --fg-light: #fff;
   --font-sans: Arial, sans-serif;
   --font-mono: Courier New, monospace;
 }
@@ -85,6 +86,9 @@ ul, ol {
   li {
     padding: var(--pad-sm);
     background: var(--bg-light);
+    &.selected {
+      color: var(--fg-light);
+    }
   }
 }
 @media (min-width: 600px) {

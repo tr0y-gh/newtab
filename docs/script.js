@@ -59,6 +59,7 @@ document.addEventListener('alpine:init', () => {
 
   Alpine.data('inputsearch', () => ({
     search: '',
+    index: -1,
     history,
     get historyFiltered () {
       return this.history.filter(item => {
@@ -67,8 +68,33 @@ document.addEventListener('alpine:init', () => {
         return match !== -1
       })
     },
+    onKeydown (e) {
+      const { key, ctrlKey, shiftKey } = e
+      if (key === 'ArrowDown' || ctrlKey && key === 'j' || !shiftKey && key === 'Tab') {
+        e.preventDefault()
+        if (this.index === this.historyFiltered.length - 1) {
+          this.index = 0
+        } else {
+          this.index += 1
+        }
+      }
+      if (key === 'ArrowUp' || ctrlKey && key === 'k' || shiftKey && key === 'Tab') {
+        e.preventDefault()
+        if (this.index === 0) {
+          this.index = this.historyFiltered.length - 1
+        } else {
+          this.index -= 1
+        }
+      }
+    },
     onSubmit () {
-      const content = this.search
+      let content
+      if (this.index > -1) {
+        content = this.historyFiltered[this.index].content
+      } else {
+        content = this.search
+      }
+
       const url = format('https://duckduckgo.com/?q=%s', content)
       const index = this.history.findIndex(i => i.content === content)
       if (index > -1) {
@@ -78,6 +104,8 @@ document.addEventListener('alpine:init', () => {
         const item = { content, count: 1, created: Date.now() }
         this.history = [ item, ...this.history ]
       }
+
+      this.search = ''
       window.localStorage.setItem('history', JSON.stringify(this.history))
       window.location.href = encodeURI(url)
     },
