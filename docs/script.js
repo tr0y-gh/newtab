@@ -40,6 +40,11 @@ function formatTime (date) {
 function format(str, ...args) {
   return str.replace(/%s/g, () => args.shift())
 }
+function isURL (string) {
+  // matches url including localhost and ip
+  const urlPattern = /^(https?:\/\/)?(localhost|[\da-z\.-]+\.([a-z\.]{2,6})|(\d{1,3}\.){3}\d{1,3})(:\d+)?(\/[\w \.-]*)*\/?$/i;
+  return urlPattern.test(string);
+}
 
 const history = JSON.parse(window.localStorage.getItem('history')) || []
 
@@ -66,7 +71,7 @@ document.addEventListener('alpine:init', () => {
         const { content } = item
         const match = content.toLowerCase().search(this.search)
         return match !== -1
-      })
+      }).sort((a, b) => b.count - a.count)
     },
     onKeydown (e) {
       const { key, ctrlKey, shiftKey } = e
@@ -88,14 +93,20 @@ document.addEventListener('alpine:init', () => {
       }
     },
     onSubmit () {
-      let content
+      let url, content
       if (this.index > -1) {
         content = this.historyFiltered[this.index].content
       } else {
         content = this.search
       }
 
-      const url = format('https://duckduckgo.com/?q=%s', content)
+      if (isURL(content)) {
+        url = content
+        if (!/https?:\/\//.test(url)) url = 'https://' + url
+      } else {
+        url = format('https://duckduckgo.com/?q=%s', encodeURI(content))
+      }
+
       const index = this.history.findIndex(i => i.content === content)
       if (index > -1) {
         this.history[index].count += 1
@@ -107,7 +118,7 @@ document.addEventListener('alpine:init', () => {
 
       this.search = ''
       window.localStorage.setItem('history', JSON.stringify(this.history))
-      window.location.href = encodeURI(url)
+      window.location.href = url
     },
   }))
 })
