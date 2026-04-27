@@ -41,7 +41,7 @@ function format(str, ...args) {
   return str.replace(/%s/g, () => args.shift())
 }
 
-const history = window.localStorage.getItem('history') || []
+const history = JSON.parse(window.localStorage.getItem('history')) || []
 
 document.addEventListener('alpine:init', () => {
   Alpine.data('datetime', () => ({
@@ -60,10 +60,26 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('inputsearch', () => ({
     search: '',
     history,
-    onSubmit (e) {
-      // TODO: s/ /+
-      const url = format('https://duckduckgo.com/?q=%s', this.search)
-      window.location.href = url
+    get historyFiltered () {
+      return this.history.filter(item => {
+        const { content } = item
+        const match = content.toLowerCase().search(this.search)
+        return match !== -1
+      })
+    },
+    onSubmit () {
+      const content = this.search
+      const url = format('https://duckduckgo.com/?q=%s', content)
+      const index = this.history.findIndex(i => i.content === content)
+      if (index > -1) {
+        this.history[index].count += 1
+        this.history[index].created = Date.now()
+      } else {
+        const item = { content, count: 1, created: Date.now() }
+        this.history = [ item, ...this.history ]
+      }
+      window.localStorage.setItem('history', JSON.stringify(this.history))
+      window.location.href = encodeURI(url)
     },
   }))
 })

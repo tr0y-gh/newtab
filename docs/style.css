@@ -55,6 +55,13 @@ body {
 .content { padding: var(--pad-md) 0; }
 .text-right { text-align: right; }
 
+ul, ol {
+  &.unstyled {
+    list-style: none;
+    padding: 0;
+  }
+}
+
 [x-data="datetime"] {
   font-family: var(--font-mono);
   .time {
@@ -74,6 +81,10 @@ body {
     border: 1px solid var(--bg-light);
     outline: none;
     color: var(--fg-normal);
+  }
+  li {
+    padding: var(--pad-sm);
+    background: var(--bg-light);
   }
 }
 @media (min-width: 600px) {

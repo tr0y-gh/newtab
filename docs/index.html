@@ -26,6 +26,13 @@
         x-init="$el.focus()"
         x-model="search"
       />
+      <template x-if="search">
+        <ul class="unstyled">
+          <template x-for="item in historyFiltered">
+            <li x-text="item.content"></li>
+          </template>
+        </ul>
+      </template>
     </form>
   </div>
 </body>
