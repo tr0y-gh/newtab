@@ -17,5 +17,16 @@
       <div class="time" x-text="time"></div>
     </div>
   </div>
+
+  <div x-data="inputsearch" class="container">
+    <form @submit.prevent="onSubmit" class="content">
+      <input
+        type="text"
+        placeholder="Search..."
+        x-init="$el.focus()"
+        x-model="search"
+      />
+    </form>
+  </div>
 </body>
 </html>

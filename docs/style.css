@@ -4,7 +4,9 @@
 
 :root {
   --max-width: 800px;
-  --pad-md: 1rem;
+  --pad-sm: .25rem;
+  --pad-md: .5rem;
+  --bg-light: #222;
   --bg-normal: #000;
   --fg-normal: #fff;
   --font-sans: Arial, sans-serif;
@@ -13,6 +15,13 @@
 .light {
   --bg-normal: #fff;
   --fg-normal: #000;
+}
+
+@media (min-width: 600px) {
+  :root {
+    --pad-sm: .5rem;
+    --pad-md: 1rem;
+  }
 }
 
 /*
@@ -54,5 +63,20 @@ body {
 }
 @media (min-width: 600px) {
   [x-data="datetime"] {
+  }
+}
+
+[x-data="inputsearch"] {
+  input {
+    width: 100%;
+    padding: var(--pad-sm);
+    background: var(--bg-light);
+    border: 1px solid var(--bg-light);
+    outline: none;
+    color: var(--fg-normal);
+  }
+}
+@media (min-width: 600px) {
+  [x-data="inputsearch"] {
   }
 }

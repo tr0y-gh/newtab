@@ -37,6 +37,12 @@ function formatTime (date) {
   if (m.length === 1) m = 0+m
   return `${h}:${m}`
 }
+function format(str, ...args) {
+  return str.replace(/%s/g, () => args.shift())
+}
+
+const history = window.localStorage.getItem('history') || []
+
 document.addEventListener('alpine:init', () => {
   Alpine.data('datetime', () => ({
     current_date: new Date(),
@@ -48,6 +54,16 @@ document.addEventListener('alpine:init', () => {
     },
     get time () {
       return formatTime(this.current_date)
+    },
+  }))
+
+  Alpine.data('inputsearch', () => ({
+    search: '',
+    history,
+    onSubmit (e) {
+      // TODO: s/ /+
+      const url = format('https://duckduckgo.com/?q=%s', this.search)
+      window.location.href = url
     },
   }))
 })
