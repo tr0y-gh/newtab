@@ -7,13 +7,14 @@
   <title>New Tab</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/svg+xml" src="/favicon.svg" />
-  <script src="alpinejs@3.15.11.min.js" defer></script>
   <script src="script.js" defer></script>
+  <script src="alpinejs@3.15.11.min.js" defer></script>
 </head>
 <body>
-  <div class="container">
-    <div class="content">
-      <h1>New Tab</h1>
+  <div x-data="datetime" class="container">
+    <div class="content text-right">
+      <div class="date" x-text="date"></div>
+      <div class="time" x-text="time"></div>
     </div>
   </div>
 </body>

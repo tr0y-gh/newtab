@@ -44,3 +44,15 @@ body {
   padding: 0 var(--pad-md);
 }
 .content { padding: var(--pad-md) 0; }
+.text-right { text-align: right; }
+
+[x-data="datetime"] {
+  font-family: var(--font-mono);
+  .time {
+    font-size: 2rem;
+  }
+}
+@media (min-width: 600px) {
+  [x-data="datetime"] {
+  }
+}
