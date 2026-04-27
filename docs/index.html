@@ -17,5 +17,25 @@
       <div class="time" x-text="time"></div>
     </div>
   </div>
+
+  <div x-data="inputsearch" class="container">
+    <form @submit.prevent="onSubmit" class="content">
+      <input
+        type="text"
+        placeholder="Search..."
+        x-init="$el.focus()"
+        x-model="search"
+        @keydown="onKeydown"
+        @input="index = -1"
+      />
+      <template x-if="search">
+        <ul class="unstyled">
+          <template x-for="item, i in historyFiltered">
+            <li :class="{ 'selected': i === index }" x-text="item.content"></li>
+          </template>
+        </ul>
+      </template>
+    </form>
+  </div>
 </body>
 </html>

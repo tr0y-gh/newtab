@@ -37,6 +37,12 @@ function formatTime (date) {
   if (m.length === 1) m = 0+m
   return `${h}:${m}`
 }
+function format(str, ...args) {
+  return str.replace(/%s/g, () => args.shift())
+}
+
+const history = JSON.parse(window.localStorage.getItem('history')) || []
+
 document.addEventListener('alpine:init', () => {
   Alpine.data('datetime', () => ({
     current_date: new Date(),
@@ -48,6 +54,60 @@ document.addEventListener('alpine:init', () => {
     },
     get time () {
       return formatTime(this.current_date)
+    },
+  }))
+
+  Alpine.data('inputsearch', () => ({
+    search: '',
+    index: -1,
+    history,
+    get historyFiltered () {
+      return this.history.filter(item => {
+        const { content } = item
+        const match = content.toLowerCase().search(this.search)
+        return match !== -1
+      })
+    },
+    onKeydown (e) {
+      const { key, ctrlKey, shiftKey } = e
+      if (key === 'ArrowDown' || ctrlKey && key === 'j' || !shiftKey && key === 'Tab') {
+        e.preventDefault()
+        if (this.index === this.historyFiltered.length - 1) {
+          this.index = 0
+        } else {
+          this.index += 1
+        }
+      }
+      if (key === 'ArrowUp' || ctrlKey && key === 'k' || shiftKey && key === 'Tab') {
+        e.preventDefault()
+        if (this.index === 0) {
+          this.index = this.historyFiltered.length - 1
+        } else {
+          this.index -= 1
+        }
+      }
+    },
+    onSubmit () {
+      let content
+      if (this.index > -1) {
+        content = this.historyFiltered[this.index].content
+      } else {
+        content = this.search
+      }
+
+      const url = format('https://duckduckgo.com/?q=%s', content)
+      const index = this.history.findIndex(i => i.content === content)
+      if (index > -1) {
+        this.history[index].count += 1
+        this.history[index].created = Date.now()
+      } else {
+        const item = { content, count: 1, created: Date.now() }
+        this.history = [ item, ...this.history ]
+      }
+
+      this.search = ''
+      window.localStorage.setItem('history', JSON.stringify(this.history))
+      window.location.href = encodeURI(url)
     },
   }))
 })
